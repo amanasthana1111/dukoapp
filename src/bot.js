@@ -14,7 +14,7 @@ const mongodb_1 = require("mongodb"); // Import MongoDB client
 // Replace with your actual bot token from BotFather
 const bot = new telegraf_1.Telegraf('7941234775:AAGaYD0h42vSPhvTQygUdSvbNWPWVWQBZCk');
 // MongoDB connection URL
-const url = 'mongodb://localhost:27017'; // Adjust if necessary for your setup
+const url = 'mongodb+srv://dukoton:w7I5lBgDyBYaE2T9@duko.gffuw.mongodb.net/?retryWrites=true&w=majority&appName=duko'; // Adjust if necessary for your setup
 const dbName = 'dukoDB'; // Your database name
 let db; // This will hold the database connection
 let userCollection; // This will hold the user collection
