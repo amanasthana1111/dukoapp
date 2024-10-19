@@ -10,7 +10,12 @@
     "mongodb": "^5.0.0",
     "dotenv": "^10.0.0"
   },
+  "scripts": {
+  "start": "node src/bot.js"
+}
+
   "devDependencies": {},
   "author": "Your Name",
   "license": "ISC"
+  
 }
