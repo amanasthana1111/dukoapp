@@ -1,21 +1,20 @@
 {
-  "name": "duko-bot",
+  "name": "dukoapp",
   "version": "1.0.0",
+  "description": "Your project description",
   "main": "src/bot.js",
   "scripts": {
-    "start": "node src/bot.js"
+    "start": "node src/bot.js",
+    "build": "tsc"
   },
   "dependencies": {
     "telegraf": "^4.0.0",
-    "mongodb": "^5.0.0",
-    "dotenv": "^10.0.0"
+    "mongodb": "^4.0.0"
   },
-  "scripts": {
-  "start": "node src/bot.js"
-}
-
-  "devDependencies": {},
-  "author": "Your Name",
-  "license": "ISC"
-  
+  "devDependencies": {
+    "typescript": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=14.x"
+  }
 }
