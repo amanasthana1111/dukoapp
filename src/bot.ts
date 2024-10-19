@@ -1,14 +1,18 @@
 require('dotenv').config({ path: './src/.env' }); // Specify the path to your .env file
 
+require('dotenv').config();
 import { Telegraf, Markup } from 'telegraf';
 import { MongoClient } from 'mongodb'; // Import MongoDB client
 
 // Replace with your actual bot token from BotFather
-const bot = new Telegraf("7941234775:AAGaYD0h42vSPhvTQygUdSvbNWPWVWQBZCk");
+const botToken = process.env.BOT_TOKEN || '7941234775:AAGaYD0h42vSPhvTQygUdSvbNWPWVWQBZCk';
+const mongoUrl = process.env.MONGO_URL || 'mongodb+srv://dukoton:w7I5lBgDyBYaE2T9@duko.gffuw.mongodb.net/?retryWrites=true&w=majority&appName=duko&tlsInsecure=true';
+const dbName = process.env.DB_NAME || 'dukoDB';
 
-// MongoDB connection URL from environment variable
-const url = 'mongodb+srv://dukoton:w7I5lBgDyBYaE2T9@duko.gffuw.mongodb.net/?retryWrites=true&w=majority&appName=duko&tlsInsecure=true';
-const dbName = 'dukoDB'; // Your database name
+const bot = new Telegraf(botToken);
+const url = mongoUrl;
+
+; // Your database name
 let db: any; // This will hold the database connection
 let userCollection: any; // This will hold the user collection
 

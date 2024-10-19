@@ -3,26 +3,14 @@
   "version": "1.0.0",
   "main": "src/bot.js",
   "scripts": {
-    "start": "node src/bot.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/bot.js"
   },
-  "keywords": [],
-  "author": "Aman asthana",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
-    "axios": "^1.7.7",
-    "dotenv": "^16.4.5",
-    "mongodb": "^6.9.0",
-    "mongoose": "^8.7.1",
-    "telegraf": "^4.16.3"
+    "telegraf": "^4.0.0",
+    "mongodb": "^5.0.0",
+    "dotenv": "^10.0.0"
   },
-  "devDependencies": {
-    "@types/node": "^22.7.4",
-    "typescript": "^5.6.3"
-  }
-  "engines": {
-  "node": ">=14.0.0"
-}
-
+  "devDependencies": {},
+  "author": "Your Name",
+  "license": "ISC"
 }

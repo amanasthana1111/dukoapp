@@ -10,19 +10,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require('dotenv').config({ path: './src/.env' }); // Specify the path to your .env file
+require('dotenv').config();
 const telegraf_1 = require("telegraf");
 const mongodb_1 = require("mongodb"); // Import MongoDB client
 // Replace with your actual bot token from BotFather
-<<<<<<< HEAD
-const bot = new telegraf_1.Telegraf('7941234775:AAGaYD0h42vSPhvTQygUdSvbNWPWVWQBZCk');
-// MongoDB connection URL
-const url = process.env.MONGODB_URI || 'mongodb+srv://dukoton:w7I5lBgDyBYaE2T9@duko.gffuw.mongodb.net/?retryWrites=true&w=majority&appName=duko';  // Adjust if necessary for your setup
-=======
-const bot = new telegraf_1.Telegraf("7941234775:AAGaYD0h42vSPhvTQygUdSvbNWPWVWQBZCk");
-// MongoDB connection URL from environment variable
-const url = 'mongodb+srv://dukoton:w7I5lBgDyBYaE2T9@duko.gffuw.mongodb.net/?retryWrites=true&w=majority&appName=duko&tlsInsecure=true';
->>>>>>> f160b13 (Initial commit)
-const dbName = 'dukoDB'; // Your database name
+const botToken = process.env.BOT_TOKEN || '7941234775:AAGaYD0h42vSPhvTQygUdSvbNWPWVWQBZCk';
+const mongoUrl = process.env.MONGO_URL || 'mongodb+srv://dukoton:w7I5lBgDyBYaE2T9@duko.gffuw.mongodb.net/?retryWrites=true&w=majority&appName=duko&tlsInsecure=true';
+const dbName = process.env.DB_NAME || 'dukoDB';
+const bot = new telegraf_1.Telegraf(botToken);
+const url = mongoUrl;
+; // Your database name
 let db; // This will hold the database connection
 let userCollection; // This will hold the user collection
 // Initialize MongoDB connection
