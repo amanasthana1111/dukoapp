@@ -6,6 +6,7 @@ import { MongoClient } from 'mongodb'; // Import MongoDB client
 
 // Replace with your actual bot token from BotFather
 const botToken = process.env.BOT_TOKEN || '7941234775:AAGaYD0h42vSPhvTQygUdSvbNWPWVWQBZCk';
+
 const mongoUrl = process.env.MONGO_URL || 'mongodb+srv://dukoton:w7I5lBgDyBYaE2T9@duko.gffuw.mongodb.net/?retryWrites=true&w=majority&appName=duko&tlsInsecure=true';
 const dbName = process.env.DB_NAME || 'dukoDB';
 
@@ -64,7 +65,7 @@ bot.start(async (ctx) => {
           Markup.button.callback('User Guide 👤', 'useractionmode'),
           Markup.button.callback('My Level 🔝', 'mylevelinfoaction')
         ],
-        [Markup.button.url('Claim Your Tokens! 🎉', 'http://t.me/duko_tonBot/Duko')],
+        [Markup.button.url('Let\'s go! 🎉', 'http://t.me/duko_tonBot/Duko')],
       ])
     );
   } else {
