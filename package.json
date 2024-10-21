@@ -3,16 +3,21 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "start": "node index.js",
+    "build": "tsc", 
+    "build": "next build", 
+    "build": "react-scripts build", 
+    "build": "webpack --mode production"
   },
   "dependencies": {
-    "dotenv": "^10.0.0", 
-    "telegraf": "^4.4.0", 
-    "mongodb": "^5.2.0", 
-    "mongoose": "^6.1.0"  
+    "dotenv": "^10.0.0",
+    "mongoose": "^6.0.0",
+    "telegraf": "^4.0.0",
+    "mongodb": "^4.0.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.0" 
+    "@types/node": "^14.0.0",
+    "@types/mongoose": "^5.0.0",
+    "@types/telegraf": "^4.0.0"
   }
 }
