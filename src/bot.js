@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require('dotenv').config({ path: './src/.env' }); // Specify the path to your .env file
+const mongoose = require('mongoose');
 require('dotenv').config();
 const telegraf_1 = require("telegraf");
 const mongodb_1 = require("mongodb"); // Import MongoDB client
@@ -34,6 +35,15 @@ const initMongoDB = () => __awaiter(void 0, void 0, void 0, function* () {
     catch (error) {
         console.error("Failed to connect to MongoDB:", error);
     }
+});
+const userSchema = new mongoose.Schema({
+    userId: { type: Number, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
+    telegramName: { type: String },
+    username: { type: String },
+    points: { type: Number, default: 0 },
+    referralLink: { type: String },
+    referredBy: { type: Number, default: null }
 });
 let userStates = {};
 // Function to validate email format
@@ -66,7 +76,7 @@ bot.start((ctx) => __awaiter(void 0, void 0, void 0, function* () {
                 telegraf_1.Markup.button.callback('User Guide 👤', 'useractionmode'),
                 telegraf_1.Markup.button.callback('My Level 🔝', 'mylevelinfoaction')
             ],
-            [telegraf_1.Markup.button.url('Claim Your Tokens! 🎉', 'http://t.me/duko_tonBot/Duko')],
+            [telegraf_1.Markup.button.url('Let\'s go! 🎉', 'http://t.me/duko_tonBot/Duko')],
         ]));
     }
     else {
@@ -112,41 +122,84 @@ bot.action('OPEN_MINI_APP', (ctx) => __awaiter(void 0, void 0, void 0, function*
         // Validate the email format
         if (isValidEmail(userEmail)) {
             try {
-                // Store the email and username in MongoDB
-                yield userCollection.insertOne({
-                    userId: ctx.from.id,
-                    email: userEmail,
-                    telegramName: ctx.from.first_name || 'User',
-                    username: ctx.from.username || 'User',
-                    bot: ctx.from.is_bot,
-                    points: 0,
-                    referralLink: `https://t.me/duko_tonBot?start=${ctx.from.id}`, // Generate a referral link for the user
-                    referredBy: null // Will store the referrer's userId when a new user joins through a referral link
-                });
-                // Send a reply confirming the email and welcoming the user
-                const thankYouMessage = yield ctx.reply(`✅ Thank you! Your email (${userEmail}) has been successfully saved. Welcome to Duko! 🎉`);
-                // Optionally, send a follow-up message after confirming the email
-                const totalPoints = 0; // Initial points
-                yield ctx.replyWithPhoto({ source: './images/duko-botM.png' }, {
-                    caption: `🌌 Hey ${ctx.from.username}, Welcome to Duko! 💖\n\nEarn points by connecting your TON wallet based on transactions. Stay tuned for our exciting features! 🌟\n\n✨ **Shape Your Rewards 😚**\n\n- **Daily Check-in:** Log in every 5 hours to claim your rewards!\n- **Invite Friends:** Boost your earnings by inviting friends to join the Duko community.\n- **Engage and Earn:** Use your wallet transactions to maximize your points!\n\nGet ready to dive into the world of Duko and discover the rewards that await you! 🚀\n\nDuko Points : ${totalPoints}`
-                });
-                setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
-                    yield ctx.deleteMessage(thankYouMessage.message_id);
-                }), 1000);
-                setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
-                    yield ctx.deleteMessage(entermess.message_id);
-                }), 1000);
-                yield ctx.reply('Transform Your Rewards with Duko! 🛠️🎉 ', telegraf_1.Markup.inlineKeyboard([
-                    [telegraf_1.Markup.button.callback('Claim Your Tokens! 🎉', 'FULL_WIDTH_ACTION')],
-                    [
-                        telegraf_1.Markup.button.url('Join Duko! 🚀', 'https://t.me/duko_ton'),
-                        telegraf_1.Markup.button.callback('Invite frens🤝', 'INVITE_FRIENDS')
-                    ],
-                    [
-                        telegraf_1.Markup.button.callback('User Guide 👤', 'useractionmode'),
-                        telegraf_1.Markup.button.callback('My Level 🔝', 'mylevelinfoaction')
-                    ],
-                ]));
+                // Check if the email already exists in the database
+                const existingUser = yield userCollection.findOne({ email: userEmail });
+                // Check if the user is already registered
+                let user = yield userCollection.findOne({ userId: ctx.from.id });
+                if (!user) {
+                    // User doesn't exist, create a new user record
+                    user = yield userCollection.insertOne({
+                        userId: ctx.from.id,
+                        email: userEmail,
+                        telegramName: ctx.from.first_name || 'User',
+                        username: ctx.from.username || 'User',
+                        points: 0,
+                        referralLink: `https://t.me/duko_tonBot?start=${ctx.from.id}`,
+                        referredBy: null // Will store the referrer's userId when a new user joins through a referral link
+                    });
+                    // Send a reply confirming the email and welcoming the user
+                    const thankYouMessage = yield ctx.reply(`✅ Thank you! Your email (${userEmail}) has been successfully saved. Welcome to Duko! 🎉`);
+                    const totalPoints = 0; // Initial points
+                    yield ctx.replyWithPhoto({ source: './images/duko-botM.png' }, {
+                        caption: `🌌 Hey ${ctx.from.username}, Welcome to Duko! 💖\n\nEarn points by connecting your TON wallet based on transactions. Stay tuned for our exciting features! 🌟\n\n✨ **Shape Your Rewards 😚**\n\n- **Daily Check-in:** Log in every 5 hours to claim your rewards!\n- **Invite Friends:** Boost your earnings by inviting friends to join the Duko community.\n- **Engage and Earn:** Use your wallet transactions to maximize your points!\n\nGet ready to dive into the world of Duko and discover the rewards that await you! 🚀\n\nDuko Points : ${totalPoints}`
+                    });
+                    yield ctx.reply('Transform Your Rewards with Duko! 🛠️🎉 ', telegraf_1.Markup.inlineKeyboard([
+                        [telegraf_1.Markup.button.callback('Claim Your Tokens! 🎉', 'claiming')],
+                        [
+                            telegraf_1.Markup.button.url('Join Duko! 🚀', 'https://t.me/duko_ton'),
+                            telegraf_1.Markup.button.callback('Invite frens🤝', 'INVITE_FRIENDS')
+                        ],
+                        [
+                            telegraf_1.Markup.button.callback('User Guide 👤', 'useractionmode'),
+                            telegraf_1.Markup.button.callback('My Level 🔝', 'mylevelinfoaction')
+                        ],
+                        [telegraf_1.Markup.button.url('Let\'s go! 🎉', 'http://t.me/duko_tonBot/Duko')],
+                    ]));
+                    setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+                        yield ctx.deleteMessage(thankYouMessage.message_id);
+                    }), 1000);
+                    setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+                        yield ctx.deleteMessage(entermess.message_id);
+                    }), 1000);
+                }
+                else {
+                    // Check if the email is already registered
+                    const existingUser = yield userCollection.findOne({ email: userEmail });
+                    if (existingUser && existingUser.userId !== ctx.from.id) {
+                        // Email is already registered to another user
+                        yield ctx.reply("🚫 This email is already registered to another account. Please enter a different email.");
+                    }
+                    else {
+                        // Check if the email is already registered
+                        const existingUser = yield userCollection.findOne({ email: userEmail });
+                        if (existingUser && existingUser.userId !== ctx.from.id) {
+                            // Email is already registered to another user
+                            yield ctx.reply("🚫 This email is already registered to another account. Please enter a different email.");
+                        }
+                        else {
+                            // Update the email if it's either new or the same as the existing one
+                            yield userCollection.updateOne({ userId: ctx.from.id }, { $set: { email: userEmail } } // Update the email field
+                            );
+                            yield ctx.reply(`✅ Your email has been updated to (${userEmail}). Welcome back to Duko! 🎉`);
+                        }
+                    }
+                    const totalPoints = 0; // Initial points
+                    yield ctx.replyWithPhoto({ source: './images/duko-botM.png' }, {
+                        caption: `🌌 Hey ${ctx.from.username}, Welcome to Duko! 💖\n\nEarn points by connecting your TON wallet based on transactions. Stay tuned for our exciting features! 🌟\n\n✨ **Shape Your Rewards 😚**\n\n- **Daily Check-in:** Log in every 5 hours to claim your rewards!\n- **Invite Friends:** Boost your earnings by inviting friends to join the Duko community.\n- **Engage and Earn:** Use your wallet transactions to maximize your points!\n\nGet ready to dive into the world of Duko and discover the rewards that await you! 🚀\n\nDuko Points : ${totalPoints}`
+                    });
+                    yield ctx.reply('Transform Your Rewards with Duko! 🛠️🎉 ', telegraf_1.Markup.inlineKeyboard([
+                        [telegraf_1.Markup.button.callback('Claim Your Tokens! 🎉', 'claiming')],
+                        [
+                            telegraf_1.Markup.button.url('Join Duko! 🚀', 'https://t.me/duko_ton'),
+                            telegraf_1.Markup.button.callback('Invite frens🤝', 'INVITE_FRIENDS')
+                        ],
+                        [
+                            telegraf_1.Markup.button.callback('User Guide 👤', 'useractionmode'),
+                            telegraf_1.Markup.button.callback('My Level 🔝', 'mylevelinfoaction')
+                        ],
+                        [telegraf_1.Markup.button.url('Let\'s go! 🎉', 'http://t.me/duko_tonBot/Duko')],
+                    ]));
+                }
             }
             catch (err) {
                 console.error("Error saving email:", err);
@@ -223,7 +276,7 @@ bot.action('claiming', (ctx) => __awaiter(void 0, void 0, void 0, function* () {
             const tokensToClaim = Math.floor(Math.random() * 51) + 50; // Random number between 50 and 100
             // Update user points and last claim time in the database
             yield userCollection.updateOne({ userId }, {
-                $inc: { points: tokensToClaim }, // Increment points by the claimed tokens
+                $inc: { points: tokensToClaim },
                 $set: { lastClaimTime: currentTime } // Update the last claim time
             });
             // Respond to the user with the claim success message

@@ -1,0 +1,80 @@
+// Handling the mini-app button action
+bot.action('OPEN_MINI_APP', async (ctx) => {
+  const userId = ctx.from.id;
+
+  // Ask for the user's email
+  await ctx.reply("📧 Please enter your email address to continue:", Markup.removeKeyboard());
+
+  // Set a listener for the user's email input
+  bot.on('text', async (ctx) => {
+    const userEmail = ctx.message.text;
+
+    // Validate the email format
+    if (isValidEmail(userEmail)) {
+      try {
+        // Find the user based on userId
+        let user = await userCollection.findOne({ userId });
+
+        if (!user) {
+          // User doesn't exist, create a new user record
+          user = await userCollection.insertOne({
+            userId: ctx.from.id,
+            email: userEmail,
+            telegramName: ctx.from.first_name || 'User',
+            username: ctx.from.username || 'User',
+            points: 0,
+            referralLink: `https://t.me/duko_tonBot?start=${ctx.from.id}`,
+            referredBy: null
+          });
+
+          await ctx.reply(`✅ Thank you! Your email (${userEmail}) has been successfully saved. Welcome to Duko! 🎉`);
+        } else {
+          // Check if the email is already registered
+          const existingUser = await userCollection.findOne({ email: userEmail });
+
+          if (existingUser && existingUser.userId !== userId) {
+            // Email is already registered to another user
+            await ctx.reply("🚫 This email is already registered to another account. Please enter a different email.");
+          } else {
+            // Update the email if it's either new or the same as the existing one
+            await userCollection.updateOne(
+              { userId },
+              { $set: { email: userEmail } } // Update the email field
+            );
+
+            await ctx.reply(`✅ Your email has been updated to (${userEmail}). Welcome back to Duko! 🎉`);
+          }
+        }
+
+        // Optionally, send a follow-up message after confirming the email
+        const totalPoints = user.points || 0; // Fetch the total points
+        await ctx.reply(
+          `🌌 Hey ${ctx.from.username}, Welcome to Duko! 💖\n\nEarn points by connecting your TON wallet based on transactions. Stay tuned for our exciting features! 🌟\n\nDuko Points : ${totalPoints}`
+        );
+
+        // Display the main menu options
+        await ctx.reply(
+          'Transform Your Rewards with Duko! 🛠️🎉 ',
+          Markup.inlineKeyboard([
+            [Markup.button.callback('Claim Your Tokens! 🎉', 'claiming')],
+            [
+              Markup.button.url('Join Duko! 🚀', 'https://t.me/duko_ton'),
+              Markup.button.callback('Invite frens🤝', 'INVITE_FRIENDS')
+            ],
+            [
+              Markup.button.callback('User Guide 👤', 'useractionmode'),
+              Markup.button.callback('My Level 🔝', 'mylevelinfoaction')
+            ],
+            [Markup.button.url('Let\'s go! 🎉', 'http://t.me/duko_tonBot/Duko')],
+          ])
+        );
+      } catch (error) {
+        console.error('Error while saving email:', error);
+        await ctx.reply("❌ Oops! There was an error while saving your email. Please try again later.");
+      }
+    } else {
+      // Invalid email format
+      await ctx.reply("🚫 Please enter a valid email address.");
+    }
+  });
+});
