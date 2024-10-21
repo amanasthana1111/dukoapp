@@ -1,23 +1,22 @@
 {
-  "name": "duko-telegram-bot",
+  "name": "dukoapp",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Your project description",
+  "main": "src/bot.js",
   "scripts": {
-    "start": "node index.js",
-    "build": "tsc", 
-    "build": "next build", 
-    "build": "react-scripts build", 
-    "build": "webpack --mode production"
+    "start": "node src/bot.js",
+    "build": "tsc"
   },
   "dependencies": {
-    "dotenv": "^10.0.0",
-    "mongoose": "^6.0.0",
-    "telegraf": "^4.0.0",
-    "mongodb": "^4.0.0"
+    "dotenv": "^16.4.5",
+    "mongodb": "^4.0.0",
+    "mongoose": "^8.7.2",
+    "telegraf": "^4.16.3"
   },
   "devDependencies": {
-    "@types/node": "^14.0.0",
-    "@types/mongoose": "^5.0.0",
-    "@types/telegraf": "^4.0.0"
+    "typescript": "^4.9.5"
+  },
+  "engines": {
+    "node": ">=14.x"
   }
 }
