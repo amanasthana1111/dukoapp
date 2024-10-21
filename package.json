@@ -2,7 +2,7 @@
   "name": "dukoapp",
   "version": "1.0.0",
   "description": "Your project description",
-  "main": "src/bot.js",
+  "main": "bot.js",
   "scripts": {
     "start": "node src/bot.js",
     "build": "tsc"
